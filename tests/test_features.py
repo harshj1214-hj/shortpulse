@@ -381,6 +381,36 @@ class GoogleAnalyticsTests(AppTestCase):
         self.assertNotIn("Google Analytics", self.app.test_client().get("/privacy").get_data(as_text=True))
 
 
+class InstallableAppTests(AppTestCase):
+    def test_manifest_service_worker_and_icons(self):
+        c = self.app.test_client()
+        m = c.get("/manifest.webmanifest")
+        self.assertEqual(m.mimetype, "application/manifest+json")
+        data = m.get_json()
+        self.assertEqual((data["name"], data["display"], data["scope"]), ("ShortPulse", "standalone", "/"))
+        for icon in data["icons"]:
+            self.assertEqual(c.get(icon["src"]).status_code, 200, icon["src"])
+        sw = c.get("/sw.js")
+        self.assertEqual((sw.mimetype, sw.headers["Service-Worker-Allowed"]), ("application/javascript", "/"))
+        self.assertIn("NEVER caches short links", sw.get_data(as_text=True))
+        self.assertEqual(c.get("/static/offline.html").status_code, 200)
+        self.assertIn('rel="manifest"', c.get("/").get_data(as_text=True))
+
+    def test_asset_links_only_when_configured(self):
+        c = self.app.test_client()
+        self.assertEqual(c.get("/.well-known/assetlinks.json").status_code, 404)
+        self.app.config["TWA_PACKAGE_NAME"] = "xyz.jainovation.shortpulse"
+        self.app.config["TWA_SHA256_FINGERPRINTS"] = "aa:bb:cc, DD:EE:FF"
+        data = c.get("/.well-known/assetlinks.json").get_json()
+        self.assertEqual(data[0]["target"]["package_name"], "xyz.jainovation.shortpulse")
+        self.assertEqual(data[0]["target"]["sha256_cert_fingerprints"], ["AA:BB:CC", "DD:EE:FF"])
+
+    def test_short_links_still_redirect_normally(self):
+        self.login(self.user_id)
+        self.create_link(alias="app-test")
+        self.assertEqual(self.app.test_client().get("/app-test", headers=HUMAN).status_code, 302)
+
+
 class MigrationAndSeedTests(AppTestCase):
     def test_old_database_gets_new_columns(self):
         path = str(Path(self.tmp.name) / "old.db")

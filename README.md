@@ -183,6 +183,17 @@ To train on real data: `python ml/train_models.py --url-csv urls.csv --bot-csv c
 
 ---
 
+## Android app (APK)
+
+ShortPulse is an installable web app (manifest, icons, service worker, offline page), so it can be packaged as an Android app with a Trusted Web Activity: the app opens the live site full-screen, with its own icon and no browser bar, and every website update reaches the app automatically.
+
+1. Deploy, then open https://www.pwabuilder.com, enter the site address, and choose **Package for stores → Android**.
+2. Set a package ID (e.g. `xyz.jainovation.shortpulse`) and generate. The download contains a test **APK**, an **AAB** for the Play Store, the **signing key** (keep it safe: updates must be signed with it) and an `assetlinks.json`.
+3. Put the package ID and the SHA-256 fingerprint from that `assetlinks.json` into Render as `TWA_PACKAGE_NAME` and `TWA_SHA256_FINGERPRINTS`. ShortPulse then serves `/.well-known/assetlinks.json`, which lets Android open the app without a browser bar.
+4. Install the APK on a phone (allow "install unknown apps" for the file manager or browser you open it from).
+
+The service worker caches only static files; short links, pages and API calls always go to the server, so clicks are counted and takedowns apply immediately. Without internet the app shows an offline page.
+
 ## Deploying on Render
 
 `render.yaml` is a Blueprint: push the repo, create a Blueprint in Render, and set `ADMIN_PASSWORD`, `DEMO_PASSWORD` and `BASE_URL` when prompted.
@@ -203,6 +214,7 @@ The live demo uses the custom domain `shortpulse.jainovation.xyz`: a `CNAME` rec
 | `DEMO_PASSWORD` | Password for the seeded demo user. |
 | `STORE_FULL_IP` / `IP_RETENTION_DAYS` | Keep full visitor IPs (default on) and for how many days (default 30). |
 | `OWNER_SEES_FULL_IP` | Show full IPs to link owners too (default off; admins always see them). |
+| `TWA_PACKAGE_NAME` / `TWA_SHA256_FINGERPRINTS` | Android app package ID and signing-key fingerprint(s) from PWABuilder, served at `/.well-known/assetlinks.json`. |
 | `GA_MEASUREMENT_ID` | Google Analytics 4 ID (e.g. `G-4C6XT5QZFH`) for ShortPulse's own pages. Not loaded on short links, landing pages or other visitor pages; query strings are stripped. Empty = off. |
 | `SEED_ON_START` | `1` = load demo data when the database has no links. |
 | `BASE_URL` | Public URL used in short links and QR codes. |

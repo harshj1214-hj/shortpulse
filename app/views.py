@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from flask import Blueprint, abort, g, redirect, render_template, url_for
+from flask import (Blueprint, abort, current_app, g, jsonify, redirect, render_template,
+                   send_from_directory, url_for)
 
 from . import services as S
 from .db import get_db
@@ -58,6 +59,56 @@ def poster(link_id: int):
     if row is None:
         abort(404)
     return render_template("poster.html", link=S.link_to_dict(row, S.base_url()))
+
+
+# ---- installable app (PWA) and Android APK support -------------------------
+@bp.get("/manifest.webmanifest")
+def manifest():
+    icons = "/static/icons/"
+    resp = jsonify({
+        "id": "/dashboard",
+        "name": "ShortPulse",
+        "short_name": "ShortPulse",
+        "description": "Short links with rules, analytics and safety",
+        "start_url": "/dashboard?source=app",
+        "scope": "/",
+        "display": "standalone",
+        "orientation": "portrait",
+        "background_color": "#EAF1F9",
+        "theme_color": "#13213A",
+        "icons": [
+            {"src": icons + "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+            {"src": icons + "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+            {"src": icons + "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
+        ],
+        "shortcuts": [
+            {"name": "New link", "url": "/links/new", "icons": [{"src": icons + "icon-192.png", "sizes": "192x192"}]},
+            {"name": "My links", "url": "/links", "icons": [{"src": icons + "icon-192.png", "sizes": "192x192"}]},
+        ],
+    })
+    resp.mimetype = "application/manifest+json"
+    return resp
+
+
+@bp.get("/sw.js")
+def service_worker():
+    # Served from the root so the worker's scope is the whole app.
+    resp = send_from_directory(current_app.static_folder, "sw.js", mimetype="application/javascript", max_age=0)
+    resp.headers["Cache-Control"] = "no-cache"
+    resp.headers["Service-Worker-Allowed"] = "/"
+    return resp
+
+
+@bp.get("/.well-known/assetlinks.json")
+def assetlinks():
+    """Digital Asset Links: proves the Android app (from PWABuilder) belongs to this site,
+    so it opens full-screen without a browser bar."""
+    pkg = current_app.config.get("TWA_PACKAGE_NAME", "")
+    fps = [f.strip().upper() for f in current_app.config.get("TWA_SHA256_FINGERPRINTS", "").split(",") if f.strip()]
+    if not pkg or not fps:
+        abort(404)
+    return jsonify([{"relation": ["delegate_permission/common.handle_all_urls"],
+                     "target": {"namespace": "android_app", "package_name": pkg, "sha256_cert_fingerprints": fps}}])
 
 
 @bp.get("/privacy")

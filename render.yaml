@@ -35,3 +35,7 @@ services:
         sync: false
       - key: BASE_URL
         sync: false
+      - key: TWA_PACKAGE_NAME            # Android app package from PWABuilder (optional)
+        sync: false
+      - key: TWA_SHA256_FINGERPRINTS     # signing-key SHA-256 from PWABuilder (optional)
+        sync: false

@@ -23,6 +23,10 @@ class Config:
     GEOLITE2_PATH = os.environ.get("GEOLITE2_PATH", "")  # path to GeoLite2-City.mmdb (optional)
     # Google Analytics 4 for ShortPulse's own pages (never on short links or landing pages). Empty = off.
     GA_MEASUREMENT_ID = os.environ.get("GA_MEASUREMENT_ID", "").strip()
+    # Android app (Trusted Web Activity): package name and signing-key SHA-256 fingerprint(s)
+    # from PWABuilder. Served at /.well-known/assetlinks.json so Android trusts the app.
+    TWA_PACKAGE_NAME = os.environ.get("TWA_PACKAGE_NAME", "").strip()
+    TWA_SHA256_FINGERPRINTS = os.environ.get("TWA_SHA256_FINGERPRINTS", "").strip()
     # Number of reverse proxies in front of the app (Render: 1). Keep 0 when clients
     # connect directly, otherwise anyone can spoof X-Forwarded-For and dodge rate limits.
     TRUSTED_PROXIES = int(os.environ.get("TRUSTED_PROXIES", "0"))

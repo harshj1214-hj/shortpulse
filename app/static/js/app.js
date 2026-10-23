@@ -186,6 +186,11 @@ const LP = (() => {
     document.addEventListener("DOMContentLoaded", watch);
   }
 
+  // ---- installable app: register the service worker (offline page, Android APK support)
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => { /* optional */ }));
+  }
+
   if (window.Chart) {
     Chart.defaults.font.family = '"Public Sans", system-ui, sans-serif';
     Chart.defaults.color = "#5B6B7F";
