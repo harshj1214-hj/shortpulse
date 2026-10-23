@@ -421,3 +421,101 @@ body.lp-dragging .lp-drop { display: grid; }
 
 /* Bootstrap's grey is too faint on glass; use the theme's muted colour (≥4.5:1 on panels). */
 .text-secondary, .form-text { color: var(--lp-muted) !important; }
+
+/* =====================================================================
+   App shell for phones and the installed app / APK (below 992px).
+   Desktop keeps the top navbar; phones get an app bar, bottom tabs, a
+   "More" sheet, and tables that turn into cards.
+   ===================================================================== */
+html { -webkit-tap-highlight-color: transparent; }
+.lp-appbar { position: sticky; top: 0; z-index: 1030; display: flex; align-items: center; gap: .6rem;
+  padding: calc(.55rem + env(safe-area-inset-top, 0px)) max(.9rem, env(safe-area-inset-right, 0px)) .55rem max(.9rem, env(safe-area-inset-left, 0px));
+  background: var(--lp-glass); -webkit-backdrop-filter: blur(var(--lp-blur)) saturate(160%); backdrop-filter: blur(var(--lp-blur)) saturate(160%);
+  border-bottom: 1px solid var(--lp-glass-border); }
+.lp-appbar .lp-mark { margin: 0; flex: 0 0 auto; }
+.lp-appbar-title { flex: 1; margin: 0; font-size: 1.12rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lp-appbar-btn { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; color: var(--lp-ink);
+  border: 1px solid var(--lp-glass-border); background: var(--lp-glass); transition: transform .15s var(--lp-spring), background-color .2s; }
+.lp-appbar-btn:active { transform: scale(.92); }
+.lp-appbar-btn svg { width: 20px; height: 20px; }
+
+.lp-tabbar { position: fixed; left: 10px; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); z-index: 1040;
+  display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; height: 66px; padding: 0 6px; border-radius: 24px;
+  background: var(--lp-glass-strong); -webkit-backdrop-filter: blur(22px) saturate(170%); backdrop-filter: blur(22px) saturate(170%);
+  border: 1px solid var(--lp-glass-border); box-shadow: var(--lp-shadow), inset 0 1px 0 var(--lp-glass-edge); }
+.lp-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; height: 100%; padding: 0; border: 0;
+  background: none; color: var(--lp-muted); text-decoration: none; font-size: .7rem; font-weight: 500; }
+.lp-tab svg { width: 23px; height: 23px; transition: transform .25s var(--lp-spring); }
+.lp-tab:active svg { transform: scale(.88); }
+.lp-tab.active { color: var(--lp-signal); font-weight: 650; }
+.lp-tab.active svg { transform: translateY(-1px) scale(1.08); }
+.lp-tab-fab { justify-self: center; width: 56px; height: 56px; margin-top: -30px; border-radius: 19px; display: grid; place-items: center;
+  color: #fff; background: linear-gradient(135deg, var(--lp-signal), var(--lp-signal-2)); box-shadow: 0 12px 26px rgba(10, 111, 184, .45);
+  transition: transform .18s var(--lp-spring); }
+.lp-tab-fab svg { width: 26px; height: 26px; stroke-width: 2.6; }
+.lp-tab-fab:active { transform: scale(.92) rotate(90deg); }
+[data-bs-theme="dark"] .lp-tab-fab { color: #04111F; }
+
+.lp-sheet { --bs-offcanvas-height: auto; max-height: 85vh; border-radius: 26px 26px 0 0; border: 1px solid var(--lp-glass-border) !important;
+  background: var(--lp-glass-strong); -webkit-backdrop-filter: blur(24px) saturate(170%); backdrop-filter: blur(24px) saturate(170%);
+  padding-bottom: env(safe-area-inset-bottom, 0px); color: var(--lp-ink); }
+.lp-sheet-handle { width: 44px; height: 5px; border-radius: 3px; background: var(--lp-line); margin: 10px auto 0; }
+.lp-sheet .list-group-item { border-width: 0 0 1px; border-radius: 0 !important; display: flex; align-items: center; gap: .9rem; width: 100%; text-align: left; padding: .85rem .3rem;
+  background: transparent; color: var(--lp-ink); border-color: var(--lp-line); font-weight: 600; }
+.lp-sheet .list-group-item svg { width: 22px; height: 22px; flex: 0 0 auto; color: var(--lp-signal); }
+.lp-sheet .list-group-item.text-danger svg { color: var(--lp-alert); }
+.lp-sheet .list-group-item small { display: block; font-weight: 400; color: var(--lp-muted); font-size: .8rem; }
+.lp-sheet .list-group-item:active { background: var(--lp-signal-soft); }
+
+@media (max-width: 991.98px) {
+  body.lp-has-tabs { padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px)); }
+  body.lp-has-tabs .lp-footer { display: none; }
+  body.lp-has-tabs .lp-quick { bottom: calc(92px + env(safe-area-inset-bottom, 0px)); }
+  body.lp-has-tabs .toast-container { bottom: calc(86px + env(safe-area-inset-bottom, 0px)) !important; }
+  body.lp-has-tabs .lp-page-head > div > p:first-child:has(> a) { display: none; }   /* breadcrumbs: the app bar has Back */
+  main.container { padding-left: 14px; padding-right: 14px; }
+  body.lp-has-tabs .lp-page-head h1 { display: none; }                  /* the app bar shows the title */
+  body.lp-has-tabs .lp-page-head > a.btn[href$="/links/new"] { display: none; }   /* the + button does this */
+  .lp-page-head { margin: 1rem 0 .9rem; gap: .75rem; }
+  .lp-page-head h1 { font-size: 1.5rem; }
+  .lp-page-head > .btn, .lp-page-head > a.btn { width: 100%; }
+  .lp-pulse { border-radius: 22px; padding: 1.1rem 1.1rem .4rem; margin-top: 1rem !important; }
+  .lp-pulse h1 { font-size: 1.4rem; }
+  .lp-pulse-chart { height: 170px; margin: .75rem -1.1rem 0; }
+  .lp-ecg { width: 90%; opacity: .25; }
+  .lp-stats { grid-template-columns: repeat(2, 1fr); }
+  .lp-stat { border-left: 1px solid var(--lp-line); border-top: 1px solid var(--lp-line); }
+  .lp-stat:nth-child(odd) { border-left: 0; }
+  .lp-stat:nth-child(-n+2) { border-top: 0; }
+  .lp-panel { border-radius: 20px; padding: 1.1rem; }
+  .btn { min-height: 44px; }
+  .btn-sm { min-height: 36px; }
+  .form-control, .form-select { font-size: 16px; min-height: 46px; }   /* 16px stops phones zooming in on focus */
+  .lp-steps li { padding: .5rem .4rem; font-size: .85rem; }
+  .lp-studio .lp-stage { position: static; min-height: 0; }
+}
+
+/* tables -> cards on phones */
+@media (max-width: 767.98px) {
+  table.lp-responsive thead { display: none; }
+  table.lp-responsive, table.lp-responsive tbody, table.lp-responsive tr { display: block; width: 100%; }
+  table.lp-responsive tr { padding: .8rem .95rem; border-bottom: 1px solid var(--lp-line); }
+  table.lp-responsive tr:last-child { border-bottom: 0; }
+  table.lp-responsive td { display: flex; justify-content: space-between; align-items: baseline; gap: .9rem; width: 100%;
+    padding: .18rem 0 !important; border: 0 !important; text-align: right !important; }
+  table.lp-responsive td[data-label]::before { content: attr(data-label); flex: 0 0 auto; color: var(--lp-muted); font-size: .72rem;
+    font-weight: 600; text-transform: uppercase; letter-spacing: .05em; text-align: left; }
+  table.lp-responsive td:first-child { display: block; text-align: left !important; padding-bottom: .35rem !important; font-size: 1rem; }
+  table.lp-responsive td:first-child::before { display: none; }
+  table.lp-responsive td:not([data-label]):not(:first-child) { justify-content: flex-end; padding-top: .5rem !important; }
+  table.lp-responsive td:empty { display: none; }
+  table.lp-responsive td[colspan] { display: block; text-align: left !important; }
+  table.lp-responsive .lp-dest { max-width: 58vw; }
+  .table-wrap:has(> table.lp-responsive) { overflow: visible; }
+}
+
+@media (display-mode: standalone) {
+  .lp-footer { display: none; }
+  body { overscroll-behavior-y: contain; user-select: none; -webkit-user-select: none; }
+  input, textarea, .lp-preview-url, .code, .lp-snippet, td { user-select: text; -webkit-user-select: text; }
+}

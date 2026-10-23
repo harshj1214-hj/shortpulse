@@ -12,6 +12,8 @@
     const u = d.user, deleted = u.status === "deleted";
     document.title = `${u.email} · ShortPulse`;
     $("u-email").textContent = u.email;
+    const appTitle = document.getElementById("appbar-title");
+    if (appTitle) appTitle.textContent = u.email;
     $("u-meta").replaceChildren(
       h("span", { class: `lp-status ${u.status === "active" ? "active" : u.status === "suspended" ? "expired" : "disabled"}`,
                   text: u.status[0].toUpperCase() + u.status.slice(1) }), " · ",

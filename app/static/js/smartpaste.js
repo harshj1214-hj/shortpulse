@@ -162,6 +162,17 @@ const LPPaste = (() => {
     if (url) open(url); else LP.toast("That doesn't contain a link.", "warning");
   });
 
+  document.getElementById("paste-shorten")?.addEventListener("click", async () => {
+    const sheet = document.getElementById("more-sheet");
+    if (sheet && window.bootstrap) bootstrap.Offcanvas.getOrCreateInstance(sheet).hide();
+    try {
+      const url = extractUrl(await navigator.clipboard.readText());
+      if (url) open(url); else LP.toast("There's no link on your clipboard. Copy one first.", "warning");
+    } catch {
+      window.location.href = "/links/new";  // clipboard blocked: use the wizard's paste instead
+    }
+  });
+
   return { extractUrl, cleanUrl, open };
 })();
 if (typeof module !== "undefined") module.exports = LPPaste;

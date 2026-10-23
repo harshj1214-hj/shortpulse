@@ -6,6 +6,8 @@
   function renderLink() {
     document.title = `${link.title || "/" + link.code} · ShortPulse`;
     $("title").textContent = link.title || `/${link.code}`;
+    const appTitle = document.getElementById("appbar-title");
+    if (appTitle) appTitle.textContent = link.title || `/${link.code}`;
     $("short").textContent = link.short_url;
     $("copy").dataset.copy = link.short_url;
     $("status").replaceChildren(LP.status(link.effective_status));

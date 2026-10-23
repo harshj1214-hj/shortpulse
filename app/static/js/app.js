@@ -83,7 +83,7 @@ const LP = (() => {
   async function copy(text, button) {
     let ok = false;
     try { await navigator.clipboard.writeText(text); ok = true; } catch { ok = legacyCopy(text); }
-    if (ok) track("copy_link");
+    if (ok) { track("copy_link"); try { navigator.vibrate?.(12); } catch { /* no haptics */ } }
     if (button) {
       const label = button.dataset.label || button.textContent;
       button.dataset.label = label;
@@ -140,11 +140,29 @@ const LP = (() => {
   const typing = (el) => el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName));
 
   // ---- theme toggle
-  document.getElementById("theme-toggle")?.addEventListener("click", () => {
+  document.querySelectorAll("[data-theme-toggle]").forEach((btn) => btn.addEventListener("click", () => {
     const next = isDark() ? "light" : "dark";
     document.documentElement.setAttribute("data-bs-theme", next);
     try { localStorage.setItem("lp-theme", next); } catch { /* private mode */ }
     document.dispatchEvent(new CustomEvent("lp:theme", { detail: next }));
+  }));
+
+  // ---- app bar back button: go back inside the app, otherwise to Home
+  document.getElementById("app-back")?.addEventListener("click", () => {
+    const fromApp = document.referrer && new URL(document.referrer).origin === location.origin;
+    if (fromApp && history.length > 1) history.back(); else location.href = "/dashboard";
+  });
+
+  // ---- tables become cards on phones: copy each column header into its cells
+  function labelTable(table) {
+    const heads = [...table.querySelectorAll("thead th")].map((th) => (th.querySelector(".visually-hidden") ? "" : th.textContent.trim()));
+    table.querySelectorAll("tbody tr").forEach((tr) => [...tr.children].forEach((td, i) => {
+      if (heads[i] && !td.hasAttribute("colspan")) td.setAttribute("data-label", heads[i]);
+    }));
+  }
+  document.querySelectorAll("table.lp-responsive").forEach((t) => {
+    labelTable(t);
+    if (t.tBodies[0]) new MutationObserver(() => labelTable(t)).observe(t.tBodies[0], { childList: true });
   });
 
   // ---- any element with data-copy copies its value
