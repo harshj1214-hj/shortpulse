@@ -1,0 +1,23 @@
+{% extends "redirect/_visitor_base.html" %}
+{% block title %}Opening {{ label }}…{% endblock %}
+{% block body %}
+  <div class="d-flex align-items-center gap-3 mb-3">
+    <div class="lp-spinner" aria-hidden="true"></div>
+    <h1 class="h4 mb-0">Opening the {{ label }} app…</h1>
+  </div>
+  <p>If the app doesn't open, you'll continue in your browser in a moment.</p>
+  <div class="d-grid gap-2">
+    <a class="btn btn-primary" id="open-app" href="{{ app_url }}">Open in {{ label }}</a>
+    <a class="btn btn-outline-primary" id="open-web" href="{{ web_url }}" rel="noreferrer">Continue in browser</a>
+  </div>
+  <script>
+    (function () {
+      var appUrl = {{ app_url|tojson }}, webUrl = {{ web_url|tojson }};
+      // If the app opens, this page is hidden and the fallback is cancelled.
+      var fallback = setTimeout(function () { if (!document.hidden) location.replace(webUrl); }, 1600);
+      document.addEventListener("visibilitychange", function () { if (document.hidden) clearTimeout(fallback); });
+      window.addEventListener("pagehide", function () { clearTimeout(fallback); });
+      location.href = appUrl;
+    })();
+  </script>
+{% endblock %}

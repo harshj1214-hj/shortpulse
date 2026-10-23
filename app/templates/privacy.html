@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Privacy{% endblock %}
+{% block content %}
+<div class="row"><div class="col-lg-8">
+<div class="lp-page-head"><div><h1>What ShortPulse records when you open a short link</h1>
+  <p>This page explains the data collected from visitors, why, and for how long.</p></div></div>
+<section class="lp-panel">
+  <h2>Recorded for every visit</h2>
+  <ul>
+    <li>The time of the visit and which short link was opened.</li>
+    <li>The website that sent you, as a domain name only (for example <span class="code">instagram.com</span>), not the full page address.</li>
+    <li>Your browser's user-agent text, which gives the device type, browser and operating system.</li>
+    <li>An approximate location (country and city) looked up from your IP address, when the platform has that lookup enabled.</li>
+    <li>Your IP address. The full address is kept for {{ config.IP_RETENTION_DAYS }} days to investigate abuse, then erased.
+      A shortened version (for example <span class="code">103.21.45.x</span>) is kept for statistics.</li>
+  </ul>
+  <h2 class="mt-4">Who can see it</h2>
+  {% if config.OWNER_SEES_FULL_IP %}
+  <p>The person who created the link sees statistics and your <strong>full IP address</strong> while it is kept. Platform administrators can see it too, to deal with spam, phishing and other abuse.</p>
+  {% else %}
+  <p>The person who created the link sees statistics and shortened IP addresses for their own links. Platform administrators can see full IP addresses while they are kept, to deal with spam, phishing and other abuse.</p>
+  {% endif %}
+  <h2 class="mt-4">Time on page and scroll depth</h2>
+  <p>Measured on landing pages hosted by ShortPulse (the page some links show before you continue), including which button you choose,
+     and on websites whose owners added ShortPulse's script. ShortPulse never reads other websites.</p>
+  {% if ga_id %}
+  <h2 class="mt-4">The ShortPulse website itself</h2>
+  <p>ShortPulse's own pages (home, sign-in, dashboard and the other management pages) use Google Analytics to count visits and
+     feature use. Google Analytics sets cookies and sends usage data to Google. It is <strong>not</strong> loaded on short links,
+     landing pages or any page you reach by opening a short link, and the links people shorten are never sent to it.</p>
+  {% endif %}
+  <h2 class="mt-4">What we don't do</h2>
+  <p class="mb-0">No cookies are set on people who open short links, nothing is sold or shared with advertisers, and other websites are never shown inside ShortPulse.</p>
+</section>
+</div></div>
+{% endblock %}

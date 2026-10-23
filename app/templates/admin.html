@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+{% block content %}
+<div class="lp-page-head"><div><h1>Admin</h1><p>Review flagged links, take down abuse and manage the domain blocklist. A disabled link stops redirecting on the next visit and keeps its analytics.</p></div></div>
+<ul class="nav nav-tabs mb-3" role="tablist">
+  <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#t-review" type="button" role="tab">Review queue <span class="badge text-bg-warning" id="flag-count"></span></button></li>
+  <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#t-links" type="button" role="tab">All links</button></li>
+  <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#t-block" type="button" role="tab">Blocklist</button></li>
+  <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#t-users" type="button" role="tab">Users</button></li>
+  <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#t-audit" type="button" role="tab">Activity log</button></li>
+</ul>
+<div class="tab-content">
+  <section class="tab-pane fade show active" id="t-review" role="tabpanel">
+    <div class="lp-panel p-0"><div class="table-wrap"><table class="table align-middle mb-0">
+      <thead><tr><th>Link</th><th>Destination</th><th>Why it was flagged</th><th>Owner</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+      <tbody id="review"></tbody></table></div></div>
+  </section>
+  <section class="tab-pane fade" id="t-links" role="tabpanel">
+    <input class="form-control mb-2" id="q" placeholder="Search alias, title or URL across all users" aria-label="Search all links">
+    <div class="lp-panel p-0"><div class="table-wrap"><table class="table align-middle mb-0">
+      <thead><tr><th>Link</th><th>Destination</th><th>Owner</th><th>Status</th><th class="lp-num">People</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+      <tbody id="all"></tbody></table></div></div>
+  </section>
+  <section class="tab-pane fade" id="t-block" role="tabpanel">
+    <form class="lp-panel" id="block-form">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-4"><label class="form-label" for="domain">Domain</label><input class="form-control" id="domain" placeholder="bad-site.example" required></div>
+        <div class="col-md-5"><label class="form-label" for="reason">Reason</label><input class="form-control" id="reason" maxlength="200" placeholder="Phishing reported by students"></div>
+        <div class="col-md-3"><button class="btn btn-primary w-100">Block domain</button></div>
+      </div>
+      <div class="form-check mt-2"><input class="form-check-input" type="checkbox" id="disable-existing" checked>
+        <label class="form-check-label" for="disable-existing">Also disable existing links to this domain and its subdomains</label></div>
+      <div id="block-error" class="mt-2"></div>
+    </form>
+    <div class="lp-panel p-0 mt-3"><div class="table-wrap"><table class="table align-middle mb-0">
+      <thead><tr><th>Domain</th><th>Reason</th><th>Added by</th><th>Added</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+      <tbody id="blocklist"></tbody></table></div></div>
+  </section>
+  <section class="tab-pane fade" id="t-users" role="tabpanel">
+    <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+      <input class="form-control" id="user-q" placeholder="Search users by email" aria-label="Search users" style="max-width:22rem">
+      <div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" role="switch" id="show-deleted">
+        <label class="form-check-label small" for="show-deleted">Show deleted accounts</label></div>
+    </div>
+    <div class="lp-panel p-0"><div class="table-wrap"><table class="table table-hover align-middle mb-0">
+      <thead><tr><th>Email</th><th>Role</th><th>Status</th><th class="lp-num">Links</th><th class="lp-num">Clicks</th><th>Last sign-in</th><th>Joined</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+      <tbody id="users"></tbody></table></div></div>
+  </section>
+  <section class="tab-pane fade" id="t-audit" role="tabpanel">
+    <p class="lp-hint">Every admin action is recorded here. Passwords are never logged.</p>
+    <div class="lp-panel p-0"><div class="table-wrap"><table class="table align-middle mb-0">
+      <thead><tr><th>When</th><th>Admin</th><th>Action</th><th>Details</th></tr></thead>
+      <tbody id="audit"></tbody></table></div></div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/admin.js') }}"></script>{% endblock %}

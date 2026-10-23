@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ status }}{% endblock %}
+{% block content %}
+<div class="lp-page-head">
+  <div>
+    <h1>{{ message }}</h1>
+    <p>Error {{ status }}. <a href="{{ url_for('views.index') }}">Go to your dashboard</a>.</p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,4 @@
+# cmd.exe misreads batch files with Unix line endings
+*.cmd text eol=crlf
+*.sh text eol=lf
+*.joblib binary

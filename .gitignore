@@ -1,0 +1,14 @@
+instance/
+*.db
+*.db-wal
+*.db-shm
+__pycache__/
+.ipynb_checkpoints/
+engine/*.so
+engine/*.dylib
+engine/test_engine
+engine/*.dll
+engine/*.exe
+.env
+*.mmdb
+.venv/

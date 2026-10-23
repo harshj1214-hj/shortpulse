@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Manage user{% endblock %}
+{% block content %}
+<div class="lp-page-head">
+  <div>
+    <p class="mb-1"><a href="{{ url_for('views.admin') }}">Admin</a> / Users</p>
+    <h1 id="u-email"><span class="lp-skel" style="width:18ch;height:1.2em"></span></h1>
+    <p id="u-meta"></p>
+  </div>
+  <a class="btn btn-outline-primary" id="u-links-page">Open their links</a>
+</div>
+<div id="u-banner"></div>
+
+<div class="row g-3">
+  <div class="col-lg-4">
+    <section class="lp-panel">
+      <h2>Account</h2>
+      <label class="form-label small" for="f-email">Email</label>
+      <div class="input-group mb-3">
+        <input class="form-control" id="f-email" type="email">
+        <button class="btn btn-outline-primary" id="save-email" type="button">Save</button>
+      </div>
+      <label class="form-label small" for="f-role">Role</label>
+      <div class="input-group mb-3">
+        <select class="form-select" id="f-role"><option value="user">User</option><option value="admin">Admin</option></select>
+        <button class="btn btn-outline-primary" id="save-role" type="button">Save</button>
+      </div>
+      <span class="form-label small d-block">Status</span>
+      <div class="d-flex gap-2 mb-1">
+        <button class="btn btn-sm btn-outline-primary" id="activate" type="button">Active</button>
+        <button class="btn btn-sm btn-outline-danger" id="suspend" type="button">Suspend</button>
+      </div>
+      <div class="form-check mb-3"><input class="form-check-input" type="checkbox" id="suspend-links">
+        <label class="form-check-label small" for="suspend-links">When suspending, also disable all their links</label></div>
+      <p class="lp-hint mb-0">A suspended user is signed out and can't sign in. Their links keep working unless you disable them.</p>
+    </section>
+    <section class="lp-panel">
+      <h2>Password</h2>
+      <p class="lp-hint">Passwords are stored as one-way hashes, so nobody can read them. You can set a new one and tell the user.</p>
+      <div class="input-group">
+        <input class="form-control" id="f-password" type="password" autocomplete="new-password" placeholder="New password (8+ characters)">
+        <button class="btn btn-outline-primary" id="save-password" type="button">Set</button>
+      </div>
+    </section>
+    <section class="lp-panel">
+      <h2 class="text-danger">Danger zone</h2>
+      <button class="btn btn-outline-danger w-100 mb-2" id="disable-links" type="button">Disable all their links</button>
+      <button class="btn btn-danger w-100" id="delete-user" type="button">Delete account</button>
+      <p class="lp-hint mt-2 mb-0">Deleting signs them out for good and frees the email. Their links are kept but disabled, so the analytics stay traceable.</p>
+    </section>
+    <div id="self-note" class="alert alert-info mt-3" hidden>This is your own account. You can't change your own role or status, or delete yourself.</div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="lp-stats mt-0" id="u-stats"></div>
+    <section class="lp-panel mt-3">
+      <h2>Links</h2>
+      <div class="table-wrap"><table class="table table-hover align-middle mb-0">
+        <thead><tr><th>Link</th><th>Destination</th><th>Status</th><th class="lp-num">People</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+        <tbody id="u-links"></tbody></table></div>
+    </section>
+    <section class="lp-panel">
+      <h2>Campaigns</h2>
+      <div class="table-wrap"><table class="table align-middle mb-0">
+        <thead><tr><th>Name</th><th class="lp-num">Links</th><th>Created</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+        <tbody id="u-campaigns"></tbody></table></div>
+    </section>
+    <section class="lp-panel">
+      <h2>Recent visits to their links</h2>
+      <div class="table-wrap"><table class="table table-sm align-middle mb-0">
+        <thead><tr><th>When</th><th>Link</th><th>IP</th><th>Device</th><th>Location</th><th>From</th></tr></thead>
+        <tbody id="u-visits"></tbody></table></div>
+    </section>
+    <section class="lp-panel">
+      <h2>Admin history for this account</h2>
+      <ul class="lp-alert-list" id="u-history"></ul>
+    </section>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>const USER_ID = {{ user_id }};</script>
+<script src="{{ url_for('static', filename='js/admin_user.js') }}"></script>
+{% endblock %}

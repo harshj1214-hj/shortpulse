@@ -1,0 +1,7 @@
+instance/
+**/__pycache__/
+engine/*.so
+engine/*.dylib
+engine/test_engine
+.git
+.env

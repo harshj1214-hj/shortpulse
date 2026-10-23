@@ -1,0 +1,10 @@
+destination,alias,title,campaign,tags,expires_at,max_clicks
+https://en.wikipedia.org/wiki/URL_shortening,shorten-101,What is a URL shortener,Workshop,learning;web,2030-12-31,
+https://docs.python.org/3/library/csv.html,csv-docs,Python csv module,Workshop,learning,,
+https://flask.palletsprojects.com/,csv-docs,Flask docs (duplicate alias),Workshop,,,
+htp:/broken-link,,Broken URL,,,,
+https://getbootstrap.com/,admin,Reserved alias,,,,
+https://docs.python.org/3/library/csv.html,,Same destination as row 3,,,,25
+https://www.chartjs.org/docs/latest/,charts,Chart.js docs,Workshop,web,31/12/2030,
+http://sbi-kyc-verify.invalid/login,,Blocklisted domain,,,,
+http://hdfc-netbanking-verify.invalid/login/confirm,,Looks like phishing,,,,

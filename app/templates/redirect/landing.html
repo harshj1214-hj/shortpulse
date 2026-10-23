@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>{{ heading }}</title>
+  <meta property="og:title" content="{{ heading }}">
+  {% if paragraphs %}<meta property="og:description" content="{{ paragraphs[0][:160] }}">{% endif %}
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..750&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --ink:#13213A; --muted:#4E5F76; --a:#0A6FB8; --b:#22A6E0; --c:#6EE7C4; --base:#EAF1F9; }
+    .theme-sunrise { --a:#D9480F; --b:#F59F00; --c:#FF8FA3; --base:#FFF3EA; }
+    .theme-mint { --a:#0B7A5C; --b:#20C997; --c:#74C0FC; --base:#E9FBF4; }
+    .theme-violet { --a:#5F3DC4; --b:#9775FA; --c:#F783AC; --base:#F3F0FF; }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; font-family:"Public Sans",system-ui,sans-serif; color:var(--ink); background:var(--base);
+      display:grid; place-items:center; padding:1.25rem; overflow-x:hidden; }
+    .mesh { position:fixed; inset:0; z-index:-1; overflow:hidden; }
+    .mesh span { position:absolute; width:70vmax; height:70vmax; border-radius:50%; opacity:.55; will-change:transform; }
+    .mesh span:nth-child(1) { background:radial-gradient(circle, var(--a), transparent 62%); top:-30vmax; left:-25vmax; animation:f1 22s ease-in-out infinite; }
+    .mesh span:nth-child(2) { background:radial-gradient(circle, var(--b), transparent 62%); bottom:-35vmax; right:-25vmax; animation:f2 26s ease-in-out infinite; }
+    .mesh span:nth-child(3) { background:radial-gradient(circle, var(--c), transparent 62%); top:20vh; right:-20vmax; width:50vmax; height:50vmax; animation:f1 30s ease-in-out infinite reverse; }
+    @keyframes f1 { 0%,100% { transform:translate(0,0) scale(1); } 50% { transform:translate(10vw,8vh) scale(1.1); } }
+    @keyframes f2 { 0%,100% { transform:translate(0,0) scale(1); } 50% { transform:translate(-12vw,-10vh) scale(1.15); } }
+    .card { width:min(480px,100%); border-radius:28px; padding:2rem 1.6rem 1.4rem; position:relative; overflow:hidden;
+      background:rgba(255,255,255,.55); -webkit-backdrop-filter:blur(22px) saturate(170%); backdrop-filter:blur(22px) saturate(170%);
+      border:1px solid rgba(255,255,255,.7); box-shadow:0 30px 70px rgba(19,33,58,.20), inset 0 1px 0 rgba(255,255,255,.9); }
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .card { background:rgba(255,255,255,.92); } }
+    .card::before { content:""; position:absolute; inset:-60% -60% auto auto; width:80%; height:120%; pointer-events:none;
+      background:radial-gradient(closest-side, rgba(255,255,255,.65), transparent); transform:rotate(25deg); }
+    .card > * { position:relative; animation:rise .6s cubic-bezier(.2,.7,.2,1) both; }
+    .card > *:nth-child(2) { animation-delay:.08s } .card > *:nth-child(3) { animation-delay:.16s }
+    .card > *:nth-child(4) { animation-delay:.24s } .card > *:nth-child(5) { animation-delay:.32s }
+    @keyframes rise { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+    .badge { display:inline-flex; align-items:center; gap:.45rem; font-size:.8rem; color:var(--muted); background:rgba(255,255,255,.55);
+      border:1px solid rgba(255,255,255,.8); padding:.25rem .7rem; border-radius:999px; }
+    .badge code { font-family:"JetBrains Mono",ui-monospace,monospace; }
+    .dot { width:.55rem; height:.55rem; border-radius:50%; background:var(--a); position:relative; }
+    .dot::after { content:""; position:absolute; inset:0; border-radius:50%; background:inherit; animation:ping 2s cubic-bezier(0,0,.2,1) infinite; }
+    @keyframes ping { 75%,100% { transform:scale(2.6); opacity:0; } }
+    h1 { font-family:"Bricolage Grotesque","Public Sans",sans-serif; font-size:clamp(1.8rem,1.3rem + 2.2vw,2.5rem); line-height:1.12; letter-spacing:-.02em; margin:.8rem 0 .9rem; }
+    p { line-height:1.6; color:#2E4058; margin:0 0 .9rem; }
+    .actions { display:grid; gap:.65rem; margin-top:1.3rem; }
+    .btn { display:block; text-align:center; text-decoration:none; padding:1rem; border-radius:16px; font-weight:600; font-size:1.02rem; position:relative; overflow:hidden;
+      transition:transform .15s cubic-bezier(.2,.9,.25,1.15), box-shadow .2s, filter .2s; }
+    .btn:active { transform:scale(.97); }
+    .btn-primary { color:#fff; background:linear-gradient(135deg, var(--a), var(--b)); box-shadow:0 12px 28px color-mix(in srgb, var(--a) 40%, transparent), inset 0 1px 0 rgba(255,255,255,.3);
+      animation:nudge 3.4s ease-in-out 2s infinite; }
+    .btn-primary::after { content:""; position:absolute; inset:0; background:linear-gradient(110deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%);
+      transform:translateX(-100%); animation:sheen 3.4s ease-in-out 2.4s infinite; }
+    @keyframes sheen { 0%,60% { transform:translateX(-100%); } 85%,100% { transform:translateX(100%); } }
+    .btn-primary:hover { filter:brightness(1.06); transform:translateY(-2px); }
+    @keyframes nudge { 0%,88%,100% { transform:none; } 92% { transform:translateY(-3px); } 96% { transform:none; } }
+    .btn-secondary { color:var(--ink); background:rgba(255,255,255,.5); border:1px solid rgba(255,255,255,.85);
+      -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); box-shadow:0 4px 14px rgba(19,33,58,.08); }
+    .btn-secondary:hover { transform:translateY(-2px); background:rgba(255,255,255,.75); }
+    .progress { position:fixed; top:0; left:0; height:3px; width:0; z-index:5; background:linear-gradient(90deg, var(--a), var(--b)); transition:width .15s; }
+    .foot { margin-top:1.4rem; font-size:.8rem; color:var(--muted); display:flex; justify-content:space-between; gap:1rem; }
+    .foot a { color:var(--muted); }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation:none !important; transition:none !important; } }
+  </style>
+</head>
+<body class="theme-{{ page.theme }}">
+  <div class="mesh" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+  <main class="card">
+    <span class="badge"><span class="dot" aria-hidden="true"></span>Shared link · <code>/{{ code }}</code></span>
+    <h1>{{ heading }}</h1>
+    <div>{% for p in paragraphs %}<p>{{ p }}</p>{% endfor %}</div>
+    <div class="actions">
+      <a class="btn btn-primary" href="{{ destination }}" rel="noreferrer" data-lp-out="{{ page.button_label }}">{{ page.button_label }}</a>
+      {% for l in page.links %}<a class="btn btn-secondary" href="{{ l.url }}" rel="noreferrer" data-lp-out="{{ l.label }}">{{ l.label }}</a>{% endfor %}
+    </div>
+    <div class="foot"><span>Short link by ShortPulse</span><a href="{{ url_for('views.privacy') }}">Privacy</a></div>
+  </main>
+  <script>
+    (function () { // reading-progress bar
+      var bar = document.getElementById("progress");
+      function upd() { var h = document.documentElement.scrollHeight - innerHeight; bar.style.width = (h > 0 ? scrollY / h * 100 : 100) + "%"; }
+      addEventListener("scroll", upd, { passive: true }); upd();
+    })();
+  </script>
+  <script src="{{ url_for('static', filename='lp-beacon.js') }}" data-cid="{{ cid }}" defer></script>
+</body>
+</html>

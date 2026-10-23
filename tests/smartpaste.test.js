@@ -1,0 +1,12 @@
+const assert = require("assert");
+const P = require("../app/static/js/smartpaste.js");
+assert.strictEqual(P.extractUrl("Check this out: https://example.com/a?b=1."), "https://example.com/a?b=1");
+assert.strictEqual(P.extractUrl("(see https://en.wikipedia.org/wiki/Foo_(bar))"), "https://en.wikipedia.org/wiki/Foo_(bar)");
+assert.strictEqual(P.extractUrl("example.com/page"), "https://example.com/page");
+assert.strictEqual(P.extractUrl("just words"), null);
+let c = P.cleanUrl("https://youtu.be/abc?si=XYZ&t=30");
+assert.deepStrictEqual(c, { url: "https://youtu.be/abc?t=30", removed: ["si"] });
+c = P.cleanUrl("https://shop.example.com/p?id=4&utm_source=ig&utm_medium=social&fbclid=1");
+assert.deepStrictEqual(c, { url: "https://shop.example.com/p?id=4", removed: ["utm_source", "utm_medium", "fbclid"] });
+assert.deepStrictEqual(P.cleanUrl("https://example.com/?q=1"), { url: "https://example.com/?q=1", removed: [] });
+console.log("smartpaste ok");

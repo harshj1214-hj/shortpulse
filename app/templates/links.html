@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Links{% endblock %}
+{% block content %}
+<div class="lp-page-head">
+  <div><h1>Links</h1><p>Expired and disabled links stay here with their full history.</p></div>
+  <a class="btn btn-primary" href="{{ url_for('views.new_link') }}">New link</a>
+</div>
+<form class="row g-2 mb-3" id="filters" role="search">
+  <div class="col-md-4"><input class="form-control" id="q" data-search placeholder="Search alias, title or URL  ( / )" aria-label="Search"></div>
+  <div class="col-6 col-md-2">
+    <select class="form-select" id="status" aria-label="Status">
+      <option value="">Any status</option><option value="active">Active</option>
+      <option value="paused">Paused</option><option value="disabled">Disabled</option>
+    </select>
+  </div>
+  <div class="col-6 col-md-2"><select class="form-select" id="campaign" aria-label="Campaign"><option value="">Any campaign</option><option value="none">No campaign</option></select></div>
+  <div class="col-6 col-md-2"><select class="form-select" id="tag" aria-label="Tag"><option value="">Any tag</option></select></div>
+  {% if is_admin() %}
+  <div class="col-6 col-md-2"><select class="form-select" id="scope" aria-label="Whose links"><option value="all">All users</option><option value="">My links</option></select></div>
+  {% endif %}
+</form>
+<div class="lp-panel p-0">
+  <div class="table-wrap">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>Short link</th><th>Destination</th><th>Campaign and tags</th><th>Status</th>
+        <th class="lp-num">People</th><th class="lp-num">Bots</th><th>Created</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/links.js') }}"></script>{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}QR and sharing{% endblock %}
+{% block content %}
+<div class="lp-page-head">
+  <div>
+    <p class="mb-1"><a href="{{ url_for('views.link_detail', link_id=link.id) }}">Back to {{ link.title or '/' ~ link.code }}</a></p>
+    <h1>QR code and sharing</h1>
+    <p>Changes preview instantly. Save the design and every QR download for this link uses it.</p>
+  </div>
+</div>
+<div class="lp-studio">
+  <div>
+    <section class="lp-panel">
+      <h2>Colours</h2>
+      <div class="lp-swatches mb-3" id="presets" aria-label="Colour presets"></div>
+      <div class="row g-2">
+        <div class="col-6"><label class="form-label small" for="fg">Code</label>
+          <div class="d-flex gap-2"><input type="color" class="form-control form-control-color lp-color" id="fg"><input class="form-control form-control-sm" id="fg-hex" maxlength="7" aria-label="Code colour hex"></div></div>
+        <div class="col-6"><label class="form-label small" for="bg">Background</label>
+          <div class="d-flex gap-2"><input type="color" class="form-control form-control-color lp-color" id="bg"><input class="form-control form-control-sm" id="bg-hex" maxlength="7" aria-label="Background colour hex"></div></div>
+      </div>
+      <div class="d-flex justify-content-between small mt-3"><span>Contrast</span><span id="contrast-text"></span></div>
+      <div class="lp-meter" aria-hidden="true"><span id="contrast-bar"></span></div>
+    </section>
+    <section class="lp-panel">
+      <h2>Shape</h2>
+      <p class="small mb-1">Modules</p>
+      <div class="btn-group w-100 mb-3" role="group" aria-label="Module style">
+        <input type="radio" class="btn-check" name="style" id="st-square" value="square"><label class="btn btn-outline-primary btn-sm" for="st-square">Square</label>
+        <input type="radio" class="btn-check" name="style" id="st-rounded" value="rounded"><label class="btn btn-outline-primary btn-sm" for="st-rounded">Rounded</label>
+        <input type="radio" class="btn-check" name="style" id="st-dots" value="dots"><label class="btn btn-outline-primary btn-sm" for="st-dots">Dots</label>
+      </div>
+      <p class="small mb-1">Corner eyes</p>
+      <div class="btn-group w-100 mb-3" role="group" aria-label="Eye style">
+        <input type="radio" class="btn-check" name="eyes" id="ey-square" value="square"><label class="btn btn-outline-primary btn-sm" for="ey-square">Square</label>
+        <input type="radio" class="btn-check" name="eyes" id="ey-rounded" value="rounded"><label class="btn btn-outline-primary btn-sm" for="ey-rounded">Soft corners</label>
+      </div>
+      <div class="row g-2">
+        <div class="col-6"><label class="form-label small" for="ec">Damage tolerance</label>
+          <select class="form-select form-select-sm" id="ec"><option value="L">Low (7%)</option><option value="M">Medium (15%)</option><option value="Q">High (25%)</option><option value="H">Highest (30%)</option></select></div>
+        <div class="col-6"><label class="form-label small" for="margin">Quiet border</label>
+          <input type="range" class="form-range" id="margin" min="2" max="8" step="1"></div>
+      </div>
+    </section>
+    <section class="lp-panel">
+      <h2>Logo and caption</h2>
+      <div class="d-flex gap-2 align-items-center">
+        <input class="form-control form-control-sm" type="file" id="logo" accept="image/png,image/jpeg,image/webp,image/gif" aria-label="Upload a logo">
+        <button class="btn btn-sm btn-outline-danger" id="logo-remove" hidden>Remove</button>
+      </div>
+      <p class="lp-hint mt-1">PNG, JPEG, WebP or GIF up to 512 KB. A logo switches damage tolerance to the highest level so the code still scans.</p>
+      <label class="form-label small" for="logo_scale">Logo size</label>
+      <input type="range" class="form-range" id="logo_scale" min="0.12" max="0.25" step="0.01">
+      <label class="form-label small mt-2" for="caption">Caption under the code</label>
+      <input class="form-control form-control-sm" id="caption" maxlength="40" placeholder="Scan to register">
+    </section>
+    <div id="design-issues" class="mt-3" aria-live="polite"></div>
+    <div class="d-flex gap-2 mt-3">
+      <button class="btn btn-primary" id="save">Save design</button>
+      <button class="btn btn-outline-primary" id="reset">Reset</button>
+    </div>
+  </div>
+  <div>
+    <div class="lp-stage" id="stage"><img id="preview" alt="Preview of the QR code"></div>
+    <section class="lp-panel mt-3">
+      <h2>Download</h2>
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-primary" id="dl-png">PNG (print quality)</a>
+        <a class="btn btn-outline-primary" id="dl-svg">SVG (scales to any size)</a>
+        <button class="btn btn-outline-primary" id="copy-img">Copy image</button>
+        <a class="btn btn-outline-primary" href="{{ url_for('views.poster', link_id=link.id) }}">Printable poster</a>
+      </div>
+    </section>
+    <section class="lp-panel">
+      <h2>Share</h2>
+      <div class="input-group mb-3">
+        <input class="form-control lp-preview-url" value="{{ link.short_url }}" readonly aria-label="Short link" id="share-url">
+        <button class="btn btn-primary" data-copy="{{ link.short_url }}">Copy</button>
+      </div>
+      <div class="lp-share" id="share"></div>
+    </section>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>const STUDIO = {{ {"id": link.id, "url": link.short_url, "title": link.title or link.code}|tojson }};</script>
+<script src="{{ url_for('static', filename='js/studio.js') }}"></script>
+{% endblock %}

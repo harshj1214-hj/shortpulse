@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block vendor %}<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>{% endblock %}
+{% block content %}
+<section class="lp-pulse mt-4" aria-labelledby="headline">
+  <svg class="lp-ecg" viewBox="0 0 600 60" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 30 H120 L135 10 L150 52 L165 22 L175 30 H300 L315 6 L332 56 L348 18 L358 30 H600"/></svg>
+  <div class="d-flex flex-wrap justify-content-between gap-3">
+    <div>
+      <span class="lp-live-label"><span class="lp-live" id="live" aria-hidden="true"></span>Live, updates every 30 seconds</span>
+      <h1 id="headline" class="mt-2"><span class="lp-skel" style="width:22ch;height:1.2em"></span></h1>
+      <p class="lp-sub" id="subline"></p>
+    </div>
+    <div class="d-flex flex-wrap align-items-start gap-2">
+      <div class="btn-group btn-group-sm" role="group" aria-label="Period" id="period">
+        <button class="btn btn-outline-light" data-period="24h">24 hours</button>
+        <button class="btn btn-outline-light active" data-period="7d">7 days</button>
+        <button class="btn btn-outline-light" data-period="30d">30 days</button>
+        <button class="btn btn-outline-light" data-period="90d">90 days</button>
+      </div>
+      <select class="form-select form-select-sm w-auto" id="campaign" aria-label="Campaign">
+        <option value="">All campaigns</option>
+        <option value="none">No campaign</option>
+      </select>
+      {% if is_admin() %}
+      <select class="form-select form-select-sm w-auto" id="scope" aria-label="Whose links">
+        <option value="all">Whole platform</option>
+        <option value="">My links</option>
+      </select>
+      {% endif %}
+    </div>
+  </div>
+  <div class="lp-pulse-chart"><canvas id="pulse" aria-label="Clicks over time" role="img"></canvas></div>
+</section>
+
+<div class="lp-stats" id="stats">{% for i in range(5) %}<div class="lp-stat"><span class="lp-skel" style="width:4ch;height:1.5rem"></span><span class="lp-skel mt-2" style="width:9ch"></span></div>{% endfor %}</div>
+
+<div class="row g-3 mt-1">
+  <div class="col-lg-7">
+    <section class="lp-panel h-100">
+      <h2>Alerts</h2>
+      <ul class="lp-alert-list" id="alerts"></ul>
+    </section>
+  </div>
+  <div class="col-lg-5">
+    <section class="lp-panel h-100">
+      <h2>Campaigns</h2>
+      <div id="campaigns"></div>
+    </section>
+  </div>
+</div>
+
+<section class="lp-panel mt-3">
+  <h2>Top links</h2>
+  <div class="table-wrap">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>Link</th><th>Destination</th><th>Status</th><th class="lp-num">Clicks</th><th class="lp-num">Unique</th></tr></thead>
+      <tbody id="top"></tbody>
+    </table>
+  </div>
+</section>
+
+<div class="row g-3 mt-1">
+  <div class="col-sm-6 col-lg-3"><section class="lp-panel h-100"><h3>Devices</h3><div id="b-device"></div></section></div>
+  <div class="col-sm-6 col-lg-3"><section class="lp-panel h-100"><h3>Browsers</h3><div id="b-browser"></div></section></div>
+  <div class="col-sm-6 col-lg-3"><section class="lp-panel h-100"><h3>Countries</h3><div id="b-country"></div></section></div>
+  <div class="col-sm-6 col-lg-3"><section class="lp-panel h-100"><h3>Referrers</h3><div id="b-referrer"></div></section></div>
+</div>
+<p class="small text-secondary mt-3" id="filters"></p>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/report.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

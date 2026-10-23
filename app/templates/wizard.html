@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}New link{% endblock %}
+{% block content %}
+<div class="lp-page-head"><div><h1>Create a short link</h1>
+  <p>We check the destination and alias as you type. Nothing is published until you confirm in step 2.</p></div></div>
+
+<div class="row"><div class="col-lg-8">
+<ol class="lp-steps" aria-label="Progress">
+  <li id="s1" class="current" aria-current="step">Destination and alias</li>
+  <li id="s2">Rules and review</li>
+</ol>
+
+<section id="step1" class="lp-panel">
+  <label class="form-label fw-semibold" for="destination">Destination URL</label>
+  <div class="input-group input-group-lg">
+    <input class="form-control" id="destination" type="url" inputmode="url" autocomplete="off"
+           placeholder="https://example.com/your-long-page" autofocus aria-describedby="dest-help">
+    <button class="btn btn-outline-primary" type="button" id="paste" title="Paste from clipboard">Paste</button>
+  </div>
+  <div class="form-text" id="dest-help">Paste a whole message if you like: we pick out the link.</div>
+  <div id="clean-hint" class="mt-2"></div>
+  <label class="form-label fw-semibold mt-3" for="alias">Custom alias <span class="fw-normal text-secondary">(optional)</span></label>
+  <div class="input-group">
+    <span class="input-group-text" id="base"></span>
+    <input class="form-control" id="alias" autocomplete="off" maxlength="32" placeholder="leave empty for a random code" aria-describedby="alias-help">
+  </div>
+  <div class="form-text" id="alias-help">3–32 letters, numbers, hyphens or underscores. Aliases are case-sensitive.</div>
+  <div class="mt-3" id="issues1" aria-live="polite"></div>
+  <div class="d-flex justify-content-end mt-3">
+    <button class="btn btn-primary" id="next" disabled>Continue to rules</button>
+  </div>
+</section>
+
+<section id="step2" class="lp-panel" hidden>
+  <div class="row g-3">
+    <div class="col-md-6"><label class="form-label" for="title">Title</label>
+      <input class="form-control" id="title" maxlength="120" placeholder="Shown in your dashboard"></div>
+    <div class="col-md-6"><label class="form-label" for="campaign">Campaign</label>
+      <select class="form-select" id="campaign"><option value="">No campaign</option></select></div>
+    <div class="col-12"><label class="form-label" for="tags">Tags</label>
+      <input class="form-control" id="tags" placeholder="event, students" aria-describedby="tags-help">
+      <div class="form-text" id="tags-help">Separate tags with commas.</div></div>
+    <div class="col-md-4"><label class="form-label" for="expires">Stop redirecting after</label>
+      <input class="form-control" id="expires" type="datetime-local"></div>
+    <div class="col-md-4"><label class="form-label" for="max_clicks">Click limit</label>
+      <input class="form-control" id="max_clicks" type="number" min="1" step="1" placeholder="No limit"></div>
+    <div class="col-md-4"><label class="form-label" for="password">Password</label>
+      <input class="form-control" id="password" type="password" autocomplete="new-password" placeholder="No password"></div>
+    <div class="col-md-6" id="app-wrap" hidden>
+      <div class="lp-switch-card form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="open_in_app" checked>
+        <label class="form-check-label" for="open_in_app"><span id="app-label">Open in the app on phones</span>
+          <span class="d-block lp-hint">Visitors on phones go straight to the app instead of a browser that asks them to sign in.</span></label>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="lp-switch-card form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="landing_enabled">
+        <label class="form-check-label" for="landing_enabled">Show a landing page first
+          <span class="d-block lp-hint">Measures time on page, scroll depth and button clicks for every visitor. You can design it fully later on the link's page.</span></label>
+        <div class="lp-collapse mt-2" id="landing-fields"><div>
+          <input class="form-control mb-2" id="landing_heading" maxlength="80" placeholder="Heading, e.g. Tech Fest 2026 is here" aria-label="Landing page heading">
+          <textarea class="form-control" id="landing_message" rows="3" maxlength="1000" placeholder="A short message for visitors" aria-label="Landing page message"></textarea>
+        </div></div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="lp-switch-card form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="track_engagement">
+        <label class="form-check-label" for="track_engagement">Measure time on page and scroll depth
+          <span class="d-block lp-hint">Only for your own website: you add one script tag to it. Adds <span class="code">?lp_cid=…</span> to the destination.</span></label>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="mt-4">Review</h2>
+  <p class="mb-1 text-secondary small">Short link</p>
+  <p class="lp-preview-url" id="preview"></p>
+  <p class="mb-1 text-secondary small">Goes to</p>
+  <p class="text-break" id="dest-review"></p>
+  <div id="issues2" aria-live="polite"></div>
+  <div class="form-check mt-2" id="ack-wrap" hidden>
+    <input class="form-check-input" type="checkbox" id="ack">
+    <label class="form-check-label" for="ack">I trust this destination. Publish it and send it to an admin for review.</label>
+  </div>
+  <div class="d-flex justify-content-between mt-4">
+    <button class="btn btn-outline-primary" id="back">Back</button>
+    <button class="btn btn-primary" id="publish">Publish link</button>
+  </div>
+</section>
+
+<section id="done" class="lp-panel" hidden>
+  <h2>Published, and copied to your clipboard</h2>
+  <div class="d-flex flex-wrap gap-4 align-items-start">
+    <img class="lp-qr" id="qr" alt="QR code for the new short link">
+    <div>
+      <p class="lp-preview-url mb-2" id="short"></p>
+      <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-primary" id="copy" data-copy="">Copy link</button>
+        <a class="btn btn-outline-primary" id="studio">Design QR and share</a>
+        <a class="btn btn-outline-primary" id="details">See analytics</a>
+        <a class="btn btn-link" href="{{ url_for('views.new_link') }}">Create another</a>
+      </div>
+    </div>
+  </div>
+</section>
+</div></div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/wizard.js') }}"></script>{% endblock %}

@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block title %}Link{% endblock %}
+{% block vendor %}<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>{% endblock %}
+{% block content %}
+<div class="lp-page-head">
+  <div>
+    <p class="mb-1"><a href="{{ url_for('views.links') }}">All links</a></p>
+    <h1 id="title"><span class="lp-skel" style="width:16ch;height:1.2em"></span></h1>
+    <p><span class="lp-preview-url" id="short"></span> <span id="status" class="ms-2"></span></p>
+    <p class="text-break" id="dest"></p>
+  </div>
+  <div class="d-flex flex-wrap gap-2">
+    <button class="btn btn-primary" id="copy" data-copy="" title="Shortcut: C">Copy link</button>
+    <a class="btn btn-outline-primary" href="{{ url_for('views.studio', link_id=link_id) }}">QR and sharing</a>
+    <button class="btn btn-outline-primary" id="toggle" hidden></button>
+    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#edit">Edit</button>
+    {% if is_admin() %}<button class="btn btn-outline-danger" id="admin-toggle" hidden></button>{% endif %}
+  </div>
+</div>
+<div id="banner"></div>
+
+<div class="row g-3">
+  <div class="col-lg-8">
+    <section class="lp-panel">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h2 class="mb-0" id="headline">Visits</h2>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Period" id="period">
+          <button class="btn btn-outline-primary" data-period="24h">24 hours</button>
+          <button class="btn btn-outline-primary active" data-period="7d">7 days</button>
+          <button class="btn btn-outline-primary" data-period="30d">30 days</button>
+          <button class="btn btn-outline-primary" data-period="90d">90 days</button>
+        </div>
+      </div>
+      <div style="height:220px" class="mt-3"><canvas id="chart" role="img" aria-label="Visits over time"></canvas></div>
+    </section>
+    <div class="lp-stats" id="stats"></div>
+    <section class="lp-panel mt-3" id="engagement">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h2 class="mb-0">Time on page and scroll depth</h2>
+        <span class="lp-reading" id="reading"><span class="lp-live" aria-hidden="true"></span><span id="reading-text">0 reading now</span></span>
+      </div>
+      <div id="eng-empty" class="mt-3" hidden>
+        <p class="mb-2">Not measured for this link yet. No shortener can see inside other websites, so pick a way to measure:</p>
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-primary btn-sm" id="eng-landing" type="button">Show a landing page first</button>
+          <button class="btn btn-outline-primary btn-sm" id="eng-script" type="button">Add a script to my own website</button>
+        </div>
+      </div>
+      <div id="eng-data">
+        <div class="lp-stats" id="eng-stats"></div>
+        <h3 class="mt-3 mb-2">How far visitors scroll</h3>
+        <div class="lp-funnel" id="funnel"></div>
+      </div>
+      <div id="snippet-box" class="mt-3" hidden>
+        <p class="mb-2">Add this line to the destination page, just before <span class="code">&lt;/body&gt;</span>. It only reports visits that came through this link.</p>
+        <div class="d-flex gap-2 align-items-start">
+          <div class="lp-snippet flex-grow-1" id="snippet"></div>
+          <button class="btn btn-sm btn-outline-primary" id="snippet-copy" data-copy="">Copy</button>
+        </div>
+      </div>
+    </section>
+    <section class="lp-panel mt-3" id="landing-panel">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h2 class="mb-0">Landing page</h2>
+        <div class="form-check form-switch m-0">
+          <input class="form-check-input" type="checkbox" role="switch" id="lp-enabled">
+          <label class="form-check-label" for="lp-enabled">Show before the destination</label>
+        </div>
+      </div>
+      <p class="lp-hint mt-1">Visitors see this page first and press a button to continue. Time on page, scroll depth and the button they choose are measured for every visit. App switching is skipped while it's on.</p>
+      <div class="row g-2">
+        <div class="col-12"><label class="form-label small" for="lp-heading">Heading</label>
+          <input class="form-control" id="lp-heading" maxlength="80" placeholder="Uses the link title if empty"></div>
+        <div class="col-12"><label class="form-label small" for="lp-message">Message</label>
+          <textarea class="form-control" id="lp-message" rows="4" maxlength="1000" placeholder="A blank line starts a new paragraph."></textarea></div>
+        <div class="col-md-6"><label class="form-label small" for="lp-button">Main button text</label>
+          <input class="form-control" id="lp-button" maxlength="40" placeholder="Continue"></div>
+        <div class="col-md-6"><span class="form-label small d-block mb-1">Colour theme</span>
+          <div class="d-flex gap-2" id="lp-themes" role="radiogroup" aria-label="Colour theme"></div></div>
+        <div class="col-12"><span class="form-label small d-block mb-1">Extra buttons (up to 5)</span>
+          <div id="lp-links"></div>
+          <button class="btn btn-sm btn-outline-primary mt-1" type="button" id="lp-add">Add a button</button></div>
+      </div>
+      <div id="lp-issues" class="mt-3"></div>
+      <div class="d-flex gap-2 mt-2">
+        <button class="btn btn-primary" type="button" id="lp-save">Save landing page</button>
+        <a class="btn btn-outline-primary" id="lp-preview" target="_blank" rel="noopener">Open it</a>
+      </div>
+    </section>
+  </div>
+  <div class="col-lg-4">
+    <section class="lp-panel">
+      <h2>Rules</h2>
+      <dl class="row mb-0 small" id="rules"></dl>
+    </section>
+    <section class="lp-panel">
+      <h2>QR code</h2>
+      <a href="{{ url_for('views.studio', link_id=link_id) }}" title="Open the QR studio"><img class="lp-qr" id="qr" alt="QR code for this link"></a>
+      <p class="small text-secondary mt-2 mb-2">Scans are counted separately from clicks.</p>
+      <div class="d-flex gap-2">
+        <a class="btn btn-sm btn-outline-primary" id="qr-download">Download PNG</a>
+        <a class="btn btn-sm btn-primary" href="{{ url_for('views.studio', link_id=link_id) }}">Design it</a>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="row g-3 mt-1">
+  <div class="col-sm-6 col-lg-3"><section class="lp-panel h-100"><h3>Devices</h3><div id="b-device"></div></section></div>
+  <div class="col-sm-6 col-lg-3"><section class="lp-panel h-100"><h3>Browsers</h3><div id="b-browser"></div></section></div>
+  <div class="col-sm-6 col-lg-3"><section class="lp-panel h-100"><h3>Countries</h3><div id="b-country"></div></section></div>
+  <div class="col-sm-6 col-lg-3"><section class="lp-panel h-100"><h3>Referrers</h3><div id="b-referrer"></div></section></div>
+</div>
+
+<section class="lp-panel mt-3">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+    <h2 class="mb-0">Recent visits</h2>
+    <a class="btn btn-sm btn-outline-primary" href="/api/links/{{ link_id }}/clicks.csv">Download all visits (CSV)</a>
+  </div>
+  <div class="table-wrap">
+    <table class="table table-sm table-hover align-middle mb-0">
+      <thead><tr><th>When</th><th>Visitor</th><th id="ip-head">IP</th><th>Device</th><th>Location</th><th>From</th><th>Engagement</th></tr></thead>
+      <tbody id="clicks"></tbody>
+    </table>
+  </div>
+  <p class="lp-hint mt-2 mb-0" id="ip-note"></p>
+</section>
+
+<div class="modal fade" id="edit" tabindex="-1" aria-labelledby="edit-title" aria-hidden="true">
+  <div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h2 class="modal-title h5" id="edit-title">Edit link</h2>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+    <div class="modal-body">
+      <div class="row g-3">
+        <div class="col-12"><label class="form-label" for="e-destination">Destination URL</label>
+          <input class="form-control" id="e-destination" type="url">
+          <div class="form-text">Changing the destination runs the safety checks again.</div></div>
+        <div class="col-md-6"><label class="form-label" for="e-title">Title</label><input class="form-control" id="e-title" maxlength="120"></div>
+        <div class="col-md-6"><label class="form-label" for="e-campaign">Campaign</label>
+          <select class="form-select" id="e-campaign"><option value="">No campaign</option></select></div>
+        <div class="col-12"><label class="form-label" for="e-tags">Tags</label><input class="form-control" id="e-tags"></div>
+        <div class="col-md-4"><label class="form-label" for="e-expires">Stop redirecting after</label><input class="form-control" id="e-expires" type="datetime-local"></div>
+        <div class="col-md-4"><label class="form-label" for="e-max">Click limit</label><input class="form-control" id="e-max" type="number" min="1" placeholder="No limit"></div>
+        <div class="col-md-4"><label class="form-label" for="e-password">New password</label><input class="form-control" id="e-password" type="password" autocomplete="new-password" placeholder="Unchanged"></div>
+        <div class="col-12"><div class="form-check"><input class="form-check-input" type="checkbox" id="e-remove-pw">
+          <label class="form-check-label" for="e-remove-pw">Remove the password</label></div></div>
+        <div class="col-md-6" id="e-app-wrap"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="e-app">
+          <label class="form-check-label" for="e-app" id="e-app-label">Open in the app on phones</label></div></div>
+        <div class="col-md-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="e-engage">
+          <label class="form-check-label" for="e-engage">Measure time on page and scroll depth</label></div></div>
+      </div>
+      <div class="mt-3" id="e-issues"></div>
+      <div class="form-check" id="e-ack-wrap" hidden><input class="form-check-input" type="checkbox" id="e-ack">
+        <label class="form-check-label" for="e-ack">I trust this destination. Save it and send it to an admin for review.</label></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline-primary" data-bs-dismiss="modal">Cancel</button>
+      <button class="btn btn-primary" id="save">Save changes</button></div>
+  </div></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>const LINK_ID = {{ link_id }};</script>
+<script src="{{ url_for('static', filename='js/report.js') }}"></script>
+<script src="{{ url_for('static', filename='js/link_detail.js') }}"></script>
+{% endblock %}

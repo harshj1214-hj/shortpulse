@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Import links{% endblock %}
+{% block content %}
+<div class="lp-page-head"><div><h1>Import links from a CSV file</h1>
+  <p>Every row is checked like the wizard checks a single link. Fix problems in the table, then import the rows that pass.</p></div>
+  <a class="btn btn-outline-primary" href="{{ url_for('static', filename='sample_import.csv') }}" download>Download a sample file</a>
+</div>
+
+<section class="lp-panel" id="upload-panel">
+  <form id="upload" class="row g-2 align-items-end">
+    <div class="col-md-8">
+      <label class="form-label" for="file">CSV file (UTF-8, up to 1 MB and 500 rows)</label>
+      <input class="form-control" type="file" id="file" accept=".csv,text/csv" required>
+    </div>
+    <div class="col-md-4"><button class="btn btn-primary w-100">Check file</button></div>
+  </form>
+  <p class="small text-secondary mt-3 mb-0">Columns: <span class="code">destination</span> (required), <span class="code">alias</span>,
+    <span class="code">title</span>, <span class="code">campaign</span>, <span class="code">tags</span> (separate with ;),
+    <span class="code">expires_at</span> (2026-12-31 or 2026-12-31T18:00, your time zone), <span class="code">max_clicks</span>.
+    A date on its own means the link works until the end of that day. Passwords can't be imported; add them per link.</p>
+  <div id="upload-error" class="mt-2"></div>
+</section>
+
+<section class="lp-panel" id="review" hidden>
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+    <h2 class="mb-0" id="summary"></h2>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-primary" id="recheck">Check again</button>
+      <button class="btn btn-primary" id="commit">Import valid rows</button>
+    </div>
+  </div>
+  <div class="form-check mb-2" id="ack-wrap" hidden><input class="form-check-input" type="checkbox" id="ack">
+    <label class="form-check-label" for="ack">Import high-risk URLs too and send them to an admin for review.</label></div>
+  <div class="table-wrap">
+    <table class="table table-sm align-top mb-0">
+      <thead><tr><th>Row</th><th>Destination</th><th>Alias</th><th>Expires</th><th>Campaign</th><th>Result</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/import.js') }}"></script>{% endblock %}

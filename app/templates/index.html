@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Short links with rules, analytics and safety{% endblock %}
+{% block content %}
+<section class="lp-hero">
+  <div>
+    <h1>Short links that know when to stop.</h1>
+    <p>Set an expiry date, a click limit or a password. See who clicked, from where, and which visits were bots.
+       Take a bad link down and it stops on the very next visit.</p>
+    <div class="d-flex flex-wrap gap-2 mt-4">
+      <a class="btn btn-primary btn-lg" href="{{ url_for('auth.register') }}">Create an account</a>
+      <a class="btn btn-outline-primary btn-lg" href="{{ url_for('auth.login') }}">Sign in</a>
+    </div>
+  </div>
+  <div class="lp-demo" aria-hidden="true">
+    <div class="row-in"><span class="typed">https://www.youtube.com/watch?v=techfest</span></div>
+    <div class="out mt-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <span class="code">/fest26</span><span class="lp-status active">Active</span>
+      </div>
+      <div class="small text-secondary mt-2">Opens the YouTube app on phones · limit 500 clicks</div>
+      <div class="mt-3 small d-flex justify-content-between"><span>People</span><span>412</span></div>
+      <div class="bar"><span style="--w:.82"></span></div>
+      <div class="mt-2 small d-flex justify-content-between"><span>Bots filtered</span><span>37</span></div>
+      <div class="bar"><span style="--w:.12"></span></div>
+      <div class="mt-2 small d-flex justify-content-between"><span>QR scans</span><span>168</span></div>
+      <div class="bar"><span style="--w:.4"></span></div>
+    </div>
+  </div>
+</section>
+<svg class="lp-trace" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0 80 H260 L290 30 L320 105 L350 60 L370 80 H620 L650 18 L685 112 L715 52 L735 80 H980 L1005 45 L1030 98 L1055 80 H1200"
+        fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>
+<section class="lp-facts">
+  <div><h3>Rules that hold under load</h3>
+    <p>A link with a 100-click limit opens exactly 100 times, even when a crowd taps it at once. Expired links stop redirecting but keep their history.</p></div>
+  <div><h3>Opens the right app</h3>
+    <p>YouTube, Spotify and Instagram links open in the app on phones instead of a browser that asks visitors to sign in.</p></div>
+  <div><h3>QR codes worth printing</h3>
+    <p>Pick colours, rounded or dotted styles and your logo. Download PNG or SVG, or print a ready-made poster.</p></div>
+  <div><h3>Analytics without the noise</h3>
+    <p>Link previews, scripts and crawlers are counted separately, so your numbers show people. On your own site you can also measure time on page and scroll depth.</p></div>
+  <div><h3>Safety before and after publishing</h3>
+    <p>Suspicious and blocklisted URLs are flagged while you create the link. Admins can disable a link and every redirect stops at once.</p></div>
+  <div><h3>Paste and done</h3>
+    <p>Copy a link anywhere, press Ctrl+V on ShortPulse, and the short link is created and copied for you.</p></div>
+</section>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "redirect/_visitor_base.html" %}
+{% set copy = {
+  "not_found": ("This short link doesn't exist", "Check the link for typos. Short links are case-sensitive, so /Abc and /abc are different."),
+  "expired": ("This link has expired", "Its owner set an end date for it. Ask whoever shared it for a new link."),
+  "limit_reached": ("This link has reached its click limit", "It was set to work for a limited number of visits, and they have all been used."),
+  "disabled": ("This link has been disabled", "An administrator turned it off because it broke the platform's safety rules."),
+  "paused": ("This link is paused", "Its owner has switched it off for now. Try again later."),
+} %}
+{% block title %}{{ copy[reason][0] }}{% endblock %}
+{% block body %}
+  <h1 class="h3">{{ copy[reason][0] }}</h1>
+  <p class="mb-0">{{ copy[reason][1] }}</p>
+{% endblock %}

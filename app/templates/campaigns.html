@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Campaigns{% endblock %}
+{% block content %}
+<div class="lp-page-head"><div><h1>Campaigns</h1><p>Group links that belong to the same event or promotion and compare how they do.</p></div></div>
+<div class="row g-3">
+  <div class="col-lg-4">
+    <form class="lp-panel" id="create">
+      <h2>New campaign</h2>
+      <label class="form-label" for="name">Name</label>
+      <input class="form-control mb-2" id="name" maxlength="60" required>
+      <label class="form-label" for="description">Description <span class="text-secondary">(optional)</span></label>
+      <textarea class="form-control mb-3" id="description" rows="2" maxlength="300"></textarea>
+      <div id="create-error" class="mb-2"></div>
+      <button class="btn btn-primary">Create campaign</button>
+    </form>
+  </div>
+  <div class="col-lg-8">
+    <div class="lp-panel p-0"><div class="table-wrap">
+      <table class="table align-middle mb-0">
+        <thead><tr><th>Campaign</th><th class="lp-num">Links</th><th class="lp-num">Clicks, 30 days</th><th>Top link</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div></div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/campaigns.js') }}"></script>{% endblock %}
